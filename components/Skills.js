@@ -1,9 +1,7 @@
 "use client";
 
-import { OrbitControls, Text } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
 import { motion } from 'framer-motion';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 export default function Skills() {
   const skills = [
@@ -14,45 +12,70 @@ export default function Skills() {
 
   const [hovered, setHovered] = useState(null);
 
+  // Animation variants for cards
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.1, duration: 0.5, ease: 'easeOut' },
+    }),
+    hover: {
+      scale: 1.05,
+      rotateX: 5,
+      rotateY: 5,
+      boxShadow: '0 0 20px rgba(0, 163, 224, 0.7)',
+      transition: { duration: 0.3 },
+    },
+  };
+
   return (
-    <section id="skills" className="py-12 sm:py-20 section-bg bg-gradient-to-br from-[#1C2526] to-[#0F1419]">
-      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-white bg-gradient-to-r from-[#00A3E0] to-[#FF6F61] bg-clip-text text-transparent">
-        Technical Skills
-      </h2>
-      <div className="h-[300px] sm:h-[400px] md:h-[600px] max-w-5xl mx-auto relative">
-        <Canvas camera={{ position: [0, 0, 15], fov: 60 }}>
-          <Suspense fallback={null}>
-            <ambientLight intensity={0.7} />
-            <pointLight position={[10, 10, 10]} color="#00A3E0" intensity={2} />
-            {skills.map((skill, index) => (
-              <Text
-                key={index}
-                position={[
-                  Math.sin(index * 0.4) * 5,
-                  Math.cos(index * 0.4) * 5,
-                  Math.sin(index * 0.2) * 5,
-                ]}
-                fontSize={window.innerWidth < 640 ? 0.4 : 0.6}
-                color={hovered === index ? '#FF6F61' : '#00A3E0'}
-                anchorX="center"
-                anchorY="middle"
-                onPointerOver={() => setHovered(index)}
-                onPointerOut={() => setHovered(null)}
-                font="/fonts/Inter-Bold.ttf" // Path to custom font
-              >
-                {skill}
-              </Text>
-            ))}
-            <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.8} />
-          </Suspense>
-        </Canvas>
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: hovered !== null ? 0.3 : 0 }}
-          transition={{ duration: 0.3 }}
-          style={{ background: 'radial-gradient(circle, rgba(0,163,224,0.3), transparent)' }}
-        />
+    <section
+      id="skills"
+      className="py-12 sm:py-20 bg-gradient-to-br from-[#0F1419] to-[#1C2526] relative overflow-hidden"
+    >
+      {/* Background Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,163,224,0.2),transparent_70%)] opacity-50" />
+
+      {/* Heading */}
+      <motion.h2
+        initial={{ opacity: 0, y: -50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center mb-12 sm:mb-16 text-transparent bg-clip-text bg-gradient-to-r from-[#00A3E0] to-[#FF6F61]"
+      >
+        My Technical Arsenal
+      </motion.h2>
+
+      {/* Skills Grid */}
+      <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
+        {skills.map((skill, index) => (
+          <motion.div
+            key={skill}
+            custom={index}
+            initial="hidden"
+            whileInView="visible"
+            whileHover="hover"
+            variants={cardVariants}
+            viewport={{ once: true }}
+            className="relative bg-[#252F38]/80 backdrop-blur-md p-4 sm:p-6 rounded-xl border border-[#00A3E0]/30 hover:border-[#FF6F61] transition-colors duration-300 cursor-pointer"
+            onMouseEnter={() => setHovered(index)}
+            onMouseLeave={() => setHovered(null)}
+          >
+            {/* Skill Text */}
+            <h3 className="text-lg sm:text-xl font-bold text-[#E6ECEF] text-center">
+              {skill}
+            </h3>
+
+            {/* Glow Effect */}
+            <motion.div
+              className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#00A3E0]/20 to-[#FF6F61]/20 opacity-0"
+              animate={{ opacity: hovered === index ? 0.8 : 0 }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.div>
+        ))}
       </div>
     </section>
   );
