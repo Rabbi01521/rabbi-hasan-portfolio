@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import About from '../components/About';
 import Contact from '../components/Contact';
+import Education from '../components/Education';
 import Experience from '../components/Experience';
 import Hero from '../components/Hero';
 import Navbar from '../components/Navbar';
@@ -14,10 +15,11 @@ export default function Home() {
         <title>Md. Rabbi Hasan | SQA Engineer</title>
         <meta name="description" content="Portfolio of Md. Rabbi Hasan, SQA Engineer" />
       </Head>
+      <Navbar />
       <main className="relative">
-        <Navbar />
         <Hero />
         <About />
+        <Education />
         <Experience />
         <Skills />
         <Projects />
