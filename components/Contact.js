@@ -13,12 +13,18 @@ export default function Contact() {
     focus: { scale: 1.02, borderColor: '#00A3E0', boxShadow: '0 0 10px rgba(0, 163, 224, 0.5)', transition: { duration: 0.3 } },
   };
 
+  const contactLinks = [
+    { href: 'mailto:rabbihasan0113@gmail.com', icon: <FaEnvelope size={24} />, label: 'Email' },
+    { href: 'tel:01521569967', icon: <FaPhone size={24} />, label: 'Phone' },
+    { href: 'https://www.linkedin.com/in/rabbihasan', icon: <FaLinkedin size={24} />, label: 'LinkedIn' }, // Replace with your LinkedIn
+    { href: 'https://github.com/Rabbi01521', icon: <FaGithub size={24} />, label: 'GitHub' }, // Replace with your GitHub
+  ];
+
   return (
     <section
       id="contact"
       className="py-12 sm:py-20 bg-[#0F1419] relative overflow-hidden"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,111,97,0.2),transparent_70%)] opacity-50" />
       <motion.h2
         initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -73,18 +79,20 @@ export default function Contact() {
           viewport={{ once: true }}
           className="mt-8 flex justify-center space-x-6 text-[#A3B1BF]"
         >
-          <a href="mailto:rabbihasan0113@gmail.com" className="hover:text-[#00A3E0] transition duration-300">
-            <FaEnvelope size={24} />
-          </a>
-          <a href="tel:01521569967" className="hover:text-[#00A3E0] transition duration-300">
-            <FaPhone size={24} />
-          </a>
-          <a href="[Your LinkedIn URL]" className="hover:text-[#00A3E0] transition duration-300">
-            <FaLinkedin size={24} />
-          </a>
-          <a href="[Your GitHub URL]" className="hover:text-[#00A3E0] transition duration-300">
-            <FaGithub size={24} />
-          </a>
+          {contactLinks.map((link, index) => (
+            <motion.a
+              key={index}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#00A3E0] transition duration-300"
+              whileHover={{ scale: 1.2, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+              aria-label={link.label}
+            >
+              {link.icon}
+            </motion.a>
+          ))}
         </motion.div>
       </div>
     </section>

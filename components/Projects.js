@@ -7,18 +7,22 @@ export default function Projects() {
     {
       title: 'Manual Testing',
       desc: 'Performed requirement analysis, wrote test cases, executed tests, and reported bugs with detailed metrics.',
+      link: 'https://github.com/Rabbi01521/manual-testing-demo', // Replace with actual link
     },
     {
       title: 'API Testing',
       desc: 'Implemented CRUD operations using Postman, generated HTML reports with Newman, and validated endpoints.',
+      link: 'https://github.com/Rabbi01521/api-testing-demo', // Replace with actual link
     },
     {
       title: 'Performance Testing',
       desc: 'Conducted load and stress testing with JMeter, analyzing system scalability and bottlenecks.',
+      link: 'https://github.com/Rabbi01521/performance-testing-demo', // Replace with actual link
     },
     {
       title: 'Web Automation',
       desc: 'Developed automation scripts for login, cart, and checkout flows using Selenium and Cypress.',
+      link: 'https://github.com/Rabbi01521/web-automation-demo', // Replace with actual link
     },
   ];
 
@@ -51,7 +55,7 @@ export default function Projects() {
       >
         My Projects
       </motion.h2>
-      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
         {projects.map((project, index) => (
           <motion.div
             key={project.title}
@@ -61,17 +65,28 @@ export default function Projects() {
             whileHover="hover"
             variants={cardVariants}
             viewport={{ once: true }}
-            className="bg-[#252F38]/90 backdrop-blur-md p-6 rounded-xl border border-[#00A3E0]/30 shadow-lg"
+            className="bg-[#252F38]/90 backdrop-blur-md p-6 rounded-xl border border-[#00A3E0]/30 shadow-lg flex flex-col justify-between"
           >
-            <h3 className="text-xl sm:text-2xl font-bold text-[#E6ECEF] mb-2">{project.title}</h3>
-            <p className="text-sm sm:text-base text-[#A3B1BF]">{project.desc}</p>
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#E6ECEF] mb-2">{project.title}</h3>
+              <p className="text-sm sm:text-base text-[#A3B1BF]">{project.desc}</p>
+            </div>
             <motion.div
-              className="mt-4 h-1 bg-gradient-to-r from-[#00A3E0] to-[#FF6F61]"
-              initial={{ width: 0 }}
-              whileInView={{ width: '50%' }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mt-4"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true }}
-            />
+            >
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-4 py-2 bg-gradient-to-r from-[#00A3E0] to-[#FF6F61] text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300"
+              >
+                View Project
+              </a>
+            </motion.div>
           </motion.div>
         ))}
       </div>

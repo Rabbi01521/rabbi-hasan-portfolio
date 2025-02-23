@@ -2,12 +2,11 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
+  const [activeSection, setActiveSection] = useState('#about'); // Default to 'about'
 
   const navItems = [
     { href: '#about', label: 'About' },
@@ -18,14 +17,44 @@ export default function Navbar() {
     { href: '#contact', label: 'Contact' },
   ];
 
+  // Smooth scrolling handler
   const handleScroll = (e, href) => {
     e.preventDefault();
     const target = document.querySelector(href);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
-      setIsOpen(false);
+      setActiveSection(href); // Set active section on click
+      setIsOpen(false); // Close mobile menu
     }
   };
+
+  // Intersection Observer to detect active section on scroll
+  useEffect(() => {
+    const sections = navItems.map((item) => document.querySelector(item.href));
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5, // Trigger when 50% of section is in view
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(`#${entry.target.id}`);
+        }
+      });
+    }, observerOptions);
+
+    sections.forEach((section) => {
+      if (section) observer.observe(section);
+    });
+
+    return () => {
+      sections.forEach((section) => {
+        if (section) observer.unobserve(section);
+      });
+    };
+  }, []);
 
   const variants = {
     open: { opacity: 1, height: 'auto', transition: { duration: 0.3 } },
@@ -53,7 +82,7 @@ export default function Navbar() {
               href={item.href}
               onClick={(e) => handleScroll(e, item.href)}
               className={`text-lg font-medium transition duration-300 relative ${
-                pathname === item.href || (item.href === '#about' && pathname === '/')
+                activeSection === item.href
                   ? 'text-[#00A3E0] after:w-full after:bg-[#00A3E0]'
                   : 'text-[#E6ECEF] hover:text-[#00A3E0]'
               } after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-0 after:bg-[#00A3E0] after:transition-all after:duration-300 hover:after:w-full`}
@@ -74,7 +103,7 @@ export default function Navbar() {
                 href={item.href}
                 onClick={(e) => handleScroll(e, item.href)}
                 className={`text-lg font-medium transition duration-300 ${
-                  pathname === item.href || (item.href === '#about' && pathname === '/')
+                  activeSection === item.href
                     ? 'text-[#00A3E0]'
                     : 'text-[#E6ECEF] hover:text-[#00A3E0]'
                 }`}
