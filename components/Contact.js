@@ -1,9 +1,13 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { FaEnvelope, FaGithub, FaLinkedin, FaPhone } from 'react-icons/fa';
 
 export default function Contact() {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('');
+
   const formVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
@@ -16,9 +20,38 @@ export default function Contact() {
   const contactLinks = [
     { href: 'mailto:rabbihasan0113@gmail.com', icon: <FaEnvelope size={24} />, label: 'Email' },
     { href: 'tel:01521569967', icon: <FaPhone size={24} />, label: 'Phone' },
-    { href: 'https://www.linkedin.com/in/rabbihasan', icon: <FaLinkedin size={24} />, label: 'LinkedIn' }, // Replace with your LinkedIn
-    { href: 'https://github.com/Rabbi01521', icon: <FaGithub size={24} />, label: 'GitHub' }, // Replace with your GitHub
+    { href: 'https://www.linkedin.com/in/rabbihasan', icon: <FaLinkedin size={24} />, label: 'LinkedIn' },
+    { href: 'https://github.com/Rabbi01521', icon: <FaGithub size={24} />, label: 'GitHub' },
   ];
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setStatus(''); // Clear status on input change
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('Sending...');
+
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setStatus('Message sent successfully!');
+        setFormData({ name: '', email: '', message: '' }); // Clear form
+      } else {
+        setStatus(result.error || 'Failed to send message.');
+      }
+    } catch (error) {
+      setStatus('An error occurred. Please try again.');
+    }
+  };
 
   return (
     <section
@@ -36,6 +69,7 @@ export default function Contact() {
       </motion.h2>
       <div className="max-w-lg mx-auto px-4">
         <motion.form
+          onSubmit={handleSubmit}
           initial="hidden"
           whileInView="visible"
           variants={formVariants}
@@ -44,34 +78,56 @@ export default function Contact() {
         >
           <motion.input
             type="text"
+            name="name"
             placeholder="Your Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
             className="w-full p-3 bg-[#0F1419] rounded-lg text-[#E6ECEF] border border-[#A3B1BF] focus:outline-none"
             whileFocus="focus"
             variants={inputVariants}
           />
           <motion.input
             type="email"
+            name="email"
             placeholder="Your Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
             className="w-full p-3 bg-[#0F1419] rounded-lg text-[#E6ECEF] border border-[#A3B1BF] focus:outline-none"
             whileFocus="focus"
             variants={inputVariants}
           />
           <motion.textarea
+            name="message"
             placeholder="Your Message"
             rows="5"
+            value={formData.message}
+            onChange={handleChange}
+            required
             className="w-full p-3 bg-[#0F1419] rounded-lg text-[#E6ECEF] border border-[#A3B1BF] focus:outline-none"
             whileFocus="focus"
             variants={inputVariants}
           />
           <motion.button
             type="submit"
-            className="w-full p-3 bg-gradient-to-r from-[#00A3E0] to-[#FF6F61] text-white rounded-lg font-medium shadow-[0_0_20px_rgba(0,163,224,0.7)] hover:shadow-[0_0_30px_rgba(255,111,97,0.7)] transition-all duration-300"
+            disabled={status === 'Sending...'}
+            className="w-full p-3 bg-gradient-to-r from-[#00A3E0] to-[#FF6F61] text-white rounded-lg font-medium shadow-[0_0_20px_rgba(0,163,224,0.7)] hover:shadow-[0_0_30px_rgba(255,111,97,0.7)] transition-all duration-300 disabled:opacity-50"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Send Message
+            {status === 'Sending...' ? 'Sending...' : 'Send Message'}
           </motion.button>
         </motion.form>
+        {status && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`mt-4 text-center ${status.includes('success') ? 'text-[#00A3E0]' : 'text-[#FF6F61]'}`}
+          >
+            {status}
+          </motion.p>
+        )}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
